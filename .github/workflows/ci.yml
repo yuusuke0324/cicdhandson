@@ -16,8 +16,14 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.22.2"
-      - name: フォーマットを実行する
-        run: test -z $(gofmt -l .)
+      - name: フォーマットをチェックする
+        run: |
+          set -e
+          if [ -n "$(gofmt -l .)" ]; then
+            echo "以下のファイルは gofmt でフォーマットされていません:"
+            gofmt -l .
+            exit 1
+          fi
       - name: 静的解析を実行する
         run: go vet ./...
       - name: テストを実行する
